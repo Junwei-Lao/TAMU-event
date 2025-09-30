@@ -7,3 +7,6 @@ json
 re
 random
 time
+sentence_transformers
+psycopg2
+pgvector

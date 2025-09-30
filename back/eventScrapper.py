@@ -7,14 +7,38 @@ import json
 import os
 
 
-def EventCalendarScrapper(getall:bool = True, printing:bool = True):
-    blackList = ["Transit: No Service",
+def EventCalendarScrapper(getall:bool = False, printing:bool = True):
+    current_time = time.localtime()
+    current_year = current_time.tm_year
+    current_month = current_time.tm_mon
+    current_day = current_time.tm_mday
+
+    if (len(str(current_month)) < 2):
+        current_month = "0" + str(current_month)
+    else: 
+        current_month = str(current_month)
+
+    if (len(str(current_day)) < 2):
+        current_day = "0"+str(current_day)
+    else: 
+        current_day = str(current_day)
+
+    day_on_scrapping = int(str(current_year) + current_month + current_day)
+
+
+
+    blackList = [
+        "Transit: No Service",
         "Transit Break Service",
         "Faculty and Staff Holiday",
         "First Day of Classes",
         "First Friday Downtown Bryan Shuttle",
         "Transit Fall Service - Last Day",
-        "CLOSED"]
+        "Fall Break - No classes",
+        "Reading day - No Classes",
+        "Thanksgiving Holiday",
+        "CLOSED"
+    ]
 
     websiteList = ["https://calendar.tamu.edu/tamu/month/date/", "http://calendar.tamu.edu/successcenter/month/date/",
     "http://calendar.tamu.edu/academyarts/month/date/","http://calendar.tamu.edu/athletics/month/date/",
@@ -204,7 +228,7 @@ def EventCalendarScrapper(getall:bool = True, printing:bool = True):
 
 
             for event in events_json:
-                if event.get("class_name") != "lw_cal_rollover_month" and event.get("event_count") != 0:
+                if event.get("class_name") != "lw_cal_rollover_month" and event.get("event_count") != 0 and int(event.get("date")) >= day_on_scrapping:
 
                     #all the events below will be on the same day
                     event_date = event.get("date")
@@ -290,15 +314,17 @@ def EventCalendarScrapper(getall:bool = True, printing:bool = True):
                                         continue
 
                                 description = events_json2["event"]["description"]
+                                description = BeautifulSoup(description, "html.parser").get_text(strip=True)
 
+                                if (event_url == "" and summary == "" and description == "" and len(filtered_events_categories)==0) : continue
 
                                 event_dic = {
                                      "event_title": event_title,
                                      "event_date": event_date,
                                      "event_url": event_url,
                                      "event_summary": summary,
-                                     "event_description": BeautifulSoup(description, "html.parser").get_text(strip=True),
-                                     "event_category": ",".join(filtered_events_categories[:])
+                                     "event_description": description,
+                                     "event_category": ", ".join(filtered_events_categories[:])
                                 }
 
                                 all_events_metadata.append(event_dic)
@@ -312,6 +338,8 @@ def EventCalendarScrapper(getall:bool = True, printing:bool = True):
                             event_url = event_day_specific.get("href", "")
 
                             print("Detected external website. Keep title and summary only")
+
+                            if (event_url == "" and summary == "" and len(filtered_events_categories)==0) : continue
 
                             event_dic = {
                                 "event_title": event_title,
@@ -330,7 +358,7 @@ def EventCalendarScrapper(getall:bool = True, printing:bool = True):
     
     return all_events_metadata
 
-def ERSscrapper():
+def ERSscrapper(printing:bool = True):
     url = "https://ers.tamu.edu/"
     init = "https://ers.tamu.edu/"
 
@@ -443,7 +471,7 @@ def ERSscrapper():
             "event_category": ""
         }
 
-        print(event_dic)
+        if printing : print(event_dic)
         all_event_metadata.append(event_dic)
 
     return all_event_metadata
@@ -452,8 +480,8 @@ def main():
     #jsonList = ["event_title","event_date","event_url","event_summary","event_description","event_category"]
     allEvents = []
 
-    allEvents += EventCalendarScrapper(getall=False)
-    allEvents += ERSscrapper()
+    allEvents += EventCalendarScrapper(printing=False)
+    allEvents += ERSscrapper(printing=False)
 
     base_dir = os.path.dirname(os.path.abspath(__file__))
     json_path = os.path.join(base_dir, "events.json")
