@@ -331,7 +331,6 @@ def EventCalendarScrapper(getall:bool = True, printing:bool = True):
     return all_events_metadata
 
 def ERSscrapper():
-    # Example target URL (replace with yours)
     url = "https://ers.tamu.edu/"
     init = "https://ers.tamu.edu/"
 
