@@ -1,4 +1,9 @@
 flask
 flask_cors
-BeautifulSoup
+bs4
 requests
+os
+json
+re
+random
+time
