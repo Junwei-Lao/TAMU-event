@@ -2,9 +2,6 @@ import json
 import psycopg2
 from pgvector.psycopg2 import register_vector, Vector
 from sentence_transformers import SentenceTransformer
-import numpy as np
-
-
 
 
 def dbtester():
