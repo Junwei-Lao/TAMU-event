@@ -7,6 +7,7 @@ import json
 import os
 
 
+
 def EventCalendarScrapper(getall:bool = False, printing:bool = True):
     current_time = time.localtime()
     current_year = current_time.tm_year
@@ -518,4 +519,7 @@ def main():
 
 
 if __name__ == "__main__":
+    start = time.perf_counter()
     main()
+    end = time.perf_counter()
+    print(end-start)

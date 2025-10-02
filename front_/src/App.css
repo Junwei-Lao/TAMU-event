@@ -1,0 +1,28 @@
+.App {
+  font-family: sans-serif;
+  text-align: center;
+  margin-top: 2%;
+}
+
+
+.components {
+  margin-bottom: 0;
+  display: flex;
+  justify-content: center;
+}
+
+
+/* Desktop */
+.dc-container {
+  border-radius: 10px;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .deep-chat-container {
+    width: 95vw;
+    height: 70vh;
+    border-radius: 100px;
+  }
+}
+

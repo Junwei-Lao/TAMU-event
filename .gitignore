@@ -1,6 +1,6 @@
-/front/*.md
-/front/package-lock.json
-/front/node_modules
-/back/events.json
+/front_/*.md
+/front_/package-lock.json
+/front_/node_modules
+/back_/events.json
 /system_tester
 README.md
