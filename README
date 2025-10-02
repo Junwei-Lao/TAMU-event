@@ -1,1 +1,25 @@
 This is a full-stack web development project aimed at building a website that analyzes TAMU events
+
+
+
+
+remaining:
+1. backend:
+    1. finish code about system tester, db connecting
+    2. be able to store db connect on branch
+2. server:
+    1. make sure can scrape, connect to db, store info, extract info
+    2. configure nginx
+    3. configure https and cloudflare
+3. frontend:
+    1. make sure able to organize the return info from backend
+
+4. advertise:
+    1. flyers
+
+
+Todo:
+1. After GCP verified:
+    1. install postgreDB with extension, configure it
+    2. install nginx, pm2
+    3. install python with required packages

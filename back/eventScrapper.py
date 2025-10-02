@@ -174,8 +174,8 @@ def EventCalendarScrapper(getall:bool = False, printing:bool = True):
 
     all_events_metadata = []
 
-    for base_url in websiteList:
-        for k in daylist:
+    for k in daylist:
+        for base_url in websiteList:
             url = base_url + k
 
             #open the first webpage
@@ -477,18 +477,44 @@ def ERSscrapper(printing:bool = True):
     return all_event_metadata
 
 def main():
-    #jsonList = ["event_title","event_date","event_url","event_summary","event_description","event_category"]
-    allEvents = []
+    try: 
+        #jsonList = ["event_title","event_date","event_url","event_summary","event_description","event_category"]
+        allEvents = []
+        allEvents += EventCalendarScrapper(printing=False)
+        allEvents += ERSscrapper(printing=False)
 
-    allEvents += EventCalendarScrapper(printing=False)
-    allEvents += ERSscrapper(printing=False)
+        merged = {}
+        for e in allEvents:
+            title = e["event_title"]
+            if title not in merged:
+                merged[title] = {
+                    "event_title": title,
+                    "event_dates": [e["event_date"]],  # store as list
+                    "event_url": e.get("event_url", ""),
+                    "event_summary": e.get("event_summary", ""),
+                    "event_description": e.get("event_description", ""),
+                    "event_category": e.get("event_category", "")
+                }
+            else:
+                merged[title]["event_dates"].append(e["event_date"])
 
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    json_path = os.path.join(base_dir, "events.json")
+        
+        for ev in merged.values():
+            ev["event_dates"] = ",".join(ev["event_dates"])
 
-    with open(json_path, "w", encoding="utf-8") as f:
-        json.dump(allEvents, f, indent=2, ensure_ascii=False)
+        
+        merged_list = list(merged.values())
 
+        #store to the same folder
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        json_path = os.path.join(base_dir, "events.json")
+        with open(json_path, "w", encoding="utf-8") as f:
+            json.dump(merged_list, f, indent=2, ensure_ascii=False)
+
+        return True
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+        return False
 
 
 if __name__ == "__main__":
