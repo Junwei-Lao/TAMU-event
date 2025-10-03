@@ -4,7 +4,12 @@ import psycopg2
 from psycopg2 import sql
 from sentence_transformers import SentenceTransformer
 
-def main(TableName: str, useOldModel: bool = False):
+
+def searcher(text:str):
+    return
+
+
+def populator(TableName: str, useOldModel: bool = False):
     with open("events.json", "r", encoding="utf-8") as f:
         events = json.load(f)
 
@@ -22,6 +27,13 @@ def main(TableName: str, useOldModel: bool = False):
         password=""
     )
     cur = conn.cursor()
+
+    cur.execute(
+        sql.SQL("TRUNCATE TABLE {table} RESTART IDENTITY;")
+        .format(table=sql.Identifier(TableName))
+    )
+    conn.commit()
+    print(f"Table {TableName} cleared.")
 
     for e in events:
         vectors = []
@@ -66,4 +78,4 @@ def main(TableName: str, useOldModel: bool = False):
 
 
 if __name__ == "__main__":
-    main("eventsA", True)
+    populator("eventsA", True)

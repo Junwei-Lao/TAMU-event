@@ -1,8 +1,39 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+import eventPopulator
+import eventScrapper
+from apscheduler.schedulers.background import BackgroundScheduler
+import datetime
+import psycopg2
 
 app = Flask(__name__)
 CORS(app)  # allow React frontend to talk to Flask
+
+
+
+eventsTable = ["eventsA", "eventsB"]
+current_table = eventsTable[0]
+
+
+
+# -------------------- Scheduled Job --------------------
+def scrape_and_populate():
+    global current_table
+
+    inactive_table = eventsTable[1] if current_table == eventsTable[0] else eventsTable[0]
+
+    print(f"Scraping into {inactive_table}...")
+
+    try:
+        eventScrapper.main()
+        #idealy I will run the test code first, and that will download the model, so that I can use the saved model
+        eventPopulator.populator(inactive_table, useOldModel=True)
+
+    except Exception as e:
+        print(f"❌ Error in scrape_and_populate: {e}")
+
+
+
 
 @app.route("/chat", methods=["POST"])
 def chat():
@@ -27,9 +58,19 @@ def chat():
     else:
         bot_reply = "There is something wrong because the server didn't receive your message. Please try again later."
     
-
     print(bot_reply)
     return jsonify({"text": bot_reply})
 
+
+
+
+
+
+
+
+
 if __name__ == "__main__":
+    scheduler = BackgroundScheduler(daemon=True)
+    scheduler.add_job(scrape_and_populate, "cron", hour=2, minute=0)
+    scheduler.start()
     app.run(host="0.0.0.0", port=6500, debug=True)
