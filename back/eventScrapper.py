@@ -7,7 +7,6 @@ import json
 import os
 
 
-
 def EventCalendarScrapper(getall:bool = False, printing:bool = True):
     current_time = time.localtime()
     current_year = current_time.tm_year
@@ -486,18 +485,18 @@ def main():
 
         merged = {}
         for e in allEvents:
-            title = e["event_title"]
-            if title not in merged:
-                merged[title] = {
-                    "event_title": title,
-                    "event_dates": [e["event_date"]],  # store as list
+            key = (e["event_title"], e["event_summary"])  # title + summary pair
+            if key not in merged:
+                merged[key] = {
+                    "event_title": e["event_title"],
+                    "event_summary": e["event_summary"],
+                    "event_dates": set([e["event_date"]]),
                     "event_url": e.get("event_url", ""),
-                    "event_summary": e.get("event_summary", ""),
                     "event_description": e.get("event_description", ""),
                     "event_category": e.get("event_category", "")
                 }
             else:
-                merged[title]["event_dates"].append(e["event_date"])
+                merged[key]["event_dates"].append(e["event_date"])
 
         
         for ev in merged.values():
@@ -522,4 +521,4 @@ if __name__ == "__main__":
     start = time.perf_counter()
     main()
     end = time.perf_counter()
-    print(end-start)
+    print("Time(s) scrapper takes: ", end-start)
