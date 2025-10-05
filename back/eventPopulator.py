@@ -5,8 +5,61 @@ from psycopg2 import sql
 from sentence_transformers import SentenceTransformer
 
 
-def searcher(text:str):
-    return
+def searcher(query_text: str, TableName: str, top_k: int = 20, useOldModel: bool = True):
+
+    if useOldModel:
+        model = SentenceTransformer("my_local_model")
+    else:
+        model = SentenceTransformer("sentence-transformers/msmarco-MiniLM-L-6-v3")
+
+    
+    query_vec = model.encode(query_text)
+    norm = np.linalg.norm(query_vec)
+    if norm > 0:
+        query_vec = query_vec / norm 
+
+    
+    conn = psycopg2.connect(
+        host="localhost",
+        database="eventsdb",
+        user="postgres",
+        password=""
+    )
+    cur = conn.cursor()
+
+
+    query = sql.SQL("""
+        SELECT 
+            event_title,
+            event_date,
+            event_url,
+            event_summary,
+            event_description,
+            embedding <-> %s AS distance
+        FROM {table}
+        ORDER BY embedding <-> %s
+        LIMIT %s;
+    """).format(table=sql.Identifier(TableName))
+
+    cur.execute(query, (query_vec.tolist(), query_vec.tolist(), top_k))
+    rows = cur.fetchall()
+
+    
+    results = []
+    for row in rows:
+        results.append({
+            "event_title": row[0],
+            "event_date": row[1],
+            "event_url": row[2],
+            "event_summary": row[3],
+            "event_description": row[4],
+            "similarity": 1 - row[5]  # Convert distance to similarity score
+        })
+
+    cur.close()
+    conn.close()
+
+    return results
 
 
 def populator(TableName: str, useOldModel: bool = False):

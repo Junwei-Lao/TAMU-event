@@ -13,20 +13,20 @@ function App() {
         <DeepChat
           className='dc-container'
           style={{width: '98%', height: '93vh'}}
-          introMessage={{text: 'Plese put down what events you want to know about. It can be long or short. We will try our best to help you! \n \n To see what extra functions we have, type **/commands** \n \n To report any issues, please send message to **report@tamuevent.com** \n \n Unlike other websites that keep message history, your message will be cleared once you refresh'}}
+          introMessage={{text: 'Welcome! 👋 \n \n Tell us what events you’re interested in — short or detailed, we’ll do our best to help! We’ll search for up to 20 best-matching events based on what you send us.\n \n 💡 *Try sending: What math events are coming up in the future?* \n \n To explore more features, send **/commands** \n \n To report any issues, contact **junweilao@tamu.edu** \n \n *Note: For your privacy, chat history will be cleared when you refresh the page.* '}}
           connect={{
             url: 'http://localhost:6500/chat',
             method: 'POST',
             headers: {'Content-Type': 'application/json'}
           }}
           requestBodyLimits={{maxMessages: -1}}
-          requestInterceptor={(details: RequestDetails) => {
-            console.log(details);
-            return details;
+          requestInterceptor={(detailsToBack: RequestDetails) => {
+            console.log(detailsToBack);
+            return detailsToBack;
           }}
-          responseInterceptor={(response: any) => {
-            console.log(response);
-            return response;
+          responseInterceptor={(responseFromBack: any) => {
+            console.log(responseFromBack);
+            return responseFromBack;
           }}
         />
       </div>

@@ -3,36 +3,29 @@ from flask_cors import CORS
 import eventPopulator
 import eventScrapper
 from apscheduler.schedulers.background import BackgroundScheduler
-import datetime
 import psycopg2
 
 app = Flask(__name__)
 CORS(app)  # allow React frontend to talk to Flask
 
-
-
 eventsTable = ["eventsA", "eventsB"]
 current_table = eventsTable[0]
 
-
-
-# -------------------- Scheduled Job --------------------
 def scrape_and_populate():
     global current_table
 
     inactive_table = eventsTable[1] if current_table == eventsTable[0] else eventsTable[0]
-
     print(f"Scraping into {inactive_table}...")
 
     try:
         eventScrapper.main()
-        #idealy I will run the test code first, and that will download the model, so that I can use the saved model
         eventPopulator.populator(inactive_table, useOldModel=True)
 
+        current_table = inactive_table
+        print(f"Switched active table. Now serving from {current_table}")
+
     except Exception as e:
-        print(f"❌ Error in scrape_and_populate: {e}")
-
-
+        print(f"Error in scrape_and_populate: {e}")
 
 
 @app.route("/chat", methods=["POST"])
@@ -48,24 +41,32 @@ def chat():
                 case "commands":
                     bot_reply = "Here are the valid commands: \n* **/commands**: List valid commands \n* **/list**: List all the events \n* **/about**: Do this if you want to know who built the website"
                 case "list":
-                    bot_reply = "Here is the list of all events: "
+                    bot_reply = "The list of events will be sent in the .json form"
                 case "about":
                     bot_reply = "This website is constructed by Jack Lao, a junior majors in CS. This website is open-source which you can find from his [GitHub](https://github.com/Junwei-Lao/TAMU-event.git). Feel free to check his GitHub and [LinkedIn](http://www.linkedin.com/in/junwei-lao-jack) profiles."
                 case _:
                     bot_reply = "That's not a valid command."
         else:
-            bot_reply = user_message
+            events = eventPopulator.searcher(user_message, current_table)
+            bot_reply = ""
+
+            if not events:
+                bot_reply = "Sorry, We couldn’t find any matching events."
+            else:
+                for i, event in enumerate(events):
+                    bot_reply += f'**{str(i)}. [{event["event_title"]}]({event["event_url"]})** \n'
+                    bot_reply += f'>Dates: {event["event_date"]} \n'
+                    if (event["event_summary"]): 
+                        bot_reply += f'>Summary: {event["event_summary"]} \n'
+                    elif (event["event_description"]): 
+                        bot_reply += f'>Description: {event["event_description"]} \n'
+
+                    bot_reply += f'>Similarity: {event["similarity"]*100:.2f}% \n'
     else:
         bot_reply = "There is something wrong because the server didn't receive your message. Please try again later."
     
     print(bot_reply)
     return jsonify({"text": bot_reply})
-
-
-
-
-
-
 
 
 

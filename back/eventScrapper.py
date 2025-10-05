@@ -30,6 +30,7 @@ def EventCalendarScrapper(getall:bool = False, printing:bool = True):
     blackList = [
         "Transit: No Service",
         "Transit Break Service",
+        "Transit Gameday Bus Service",
         "Faculty and Staff Holiday",
         "First Day of Classes",
         "First Friday Downtown Bryan Shuttle",
@@ -496,11 +497,11 @@ def main():
                     "event_category": e.get("event_category", "")
                 }
             else:
-                merged[key]["event_dates"].append(e["event_date"])
+                merged[key]["event_dates"].add(e["event_date"])
 
         
         for ev in merged.values():
-            ev["event_dates"] = ",".join(ev["event_dates"])
+            ev["event_dates"] = ",".join(sorted(ev["event_dates"]))
 
         
         merged_list = list(merged.values())
@@ -511,10 +512,8 @@ def main():
         with open(json_path, "w", encoding="utf-8") as f:
             json.dump(merged_list, f, indent=2, ensure_ascii=False)
 
-        return True
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
-        return False
 
 
 if __name__ == "__main__":
