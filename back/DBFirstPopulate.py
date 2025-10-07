@@ -7,7 +7,7 @@ import json
 import os
 
 
-def EventCalendarScrapper(getall:bool = False, printing:bool = True):
+def EventCalendarScrapper(getall:bool = False, printing:bool = True, dayShift:int = 0):
     current_time = time.localtime()
     current_year = current_time.tm_year
     current_month = current_time.tm_mon
@@ -23,7 +23,7 @@ def EventCalendarScrapper(getall:bool = False, printing:bool = True):
     else: 
         current_day = str(current_day)
 
-    day_on_scrapping = int(str(current_year) + current_month + current_day)
+    day_on_scrapping = int(str(current_year) + current_month + current_day) + dayShift #this will be rediculus if today is the last day of the month but works fine in the middle of a month
 
 
 
@@ -477,11 +477,11 @@ def ERSscrapper(printing:bool = True):
 
     return all_event_metadata
 
-def main():
+def main(jsonName:str, dayShift:int = 0):
     try: 
         #jsonList = ["event_title","event_date","event_url","event_summary","event_description","event_category"]
         allEvents = []
-        allEvents += EventCalendarScrapper(printing=False)
+        allEvents += EventCalendarScrapper(printing=False, dayShift=dayShift)
         allEvents += ERSscrapper(printing=False)
 
         merged = {}
@@ -508,7 +508,7 @@ def main():
 
         #store to the same folder
         base_dir = os.path.dirname(os.path.abspath(__file__))
-        json_path = os.path.join(base_dir, "events.json")
+        json_path = os.path.join(base_dir, jsonName+".json")
         with open(json_path, "w", encoding="utf-8") as f:
             json.dump(merged_list, f, indent=2, ensure_ascii=False)
 
@@ -518,6 +518,7 @@ def main():
 
 if __name__ == "__main__":
     start = time.perf_counter()
-    main()
+    main("eventsA")
+    main("eventsB", 1)
     end = time.perf_counter()
     print("Time(s) scrapper takes: ", end-start)
