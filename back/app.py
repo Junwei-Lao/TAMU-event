@@ -8,7 +8,7 @@ import psycopg2
 app = Flask(__name__)
 CORS(app)  # allow React frontend to talk to Flask
 
-eventsTable = ["eventsA", "eventsB"]
+eventsTable = ["eventsa", "eventsb"]
 current_table = eventsTable[0]
 
 def scrape_and_populate():
@@ -71,7 +71,9 @@ def chat():
 
 
 if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=6500, debug=True)
     scheduler = BackgroundScheduler(daemon=True)
     scheduler.add_job(scrape_and_populate, "cron", hour=2, minute=0)
     scheduler.start()
-    app.run(host="0.0.0.0", port=6500, debug=True)
+    
+    

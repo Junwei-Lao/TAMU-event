@@ -4,7 +4,7 @@ CREATE DATABASE eventsdb;
 
 CREATE EXTENSION IF NOT EXISTS vector;
 
-CREATE TABLE eventsA (
+CREATE TABLE eventsa (
     id SERIAL PRIMARY KEY,
     event_title TEXT NOT NULL,
     event_date TEXT NOT NULL,
@@ -15,7 +15,7 @@ CREATE TABLE eventsA (
     embedding vector(384) NOT NULL
 );
 
-CREATE TABLE eventsB (
+CREATE TABLE eventsb (
     id SERIAL PRIMARY KEY,
     event_title TEXT NOT NULL,
     event_date TEXT NOT NULL,
