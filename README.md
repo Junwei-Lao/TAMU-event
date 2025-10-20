@@ -13,7 +13,7 @@ Automatically scrapes events from the [Texas A&M University calendar](https://ca
 
 Uses a two-table swapping system (eventsA and eventsB) to ensure uninterrupted service during data updates.
 
-Combines full-text search and vector similarity for fuzzy event searching.
+Integrates with PostgreSQL and combines full-text search and vector similarity for fuzzy event searching.
 
 ### Conversational Search
 
@@ -41,7 +41,7 @@ Built assets can be served by any static web server (currently deploying on Ngin
 
 ### Deployment
 
-Designed for Linux-based cloud environments.
+Designed for Linux-based cloud environments and deployed on Google Cloud Platform.
 
 Flask application runs under process management (PM2) for reliability.
 
