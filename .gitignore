@@ -2,5 +2,5 @@
 /front_/package-lock.json
 /front_/node_modules
 /back_/events.json
+/back/__pycache__
 /system_tester
-README.md

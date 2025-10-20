@@ -38,7 +38,8 @@ def EventCalendarScrapper(getall:bool = False, printing:bool = True):
         "Fall Break - No classes",
         "Reading day - No Classes",
         "Thanksgiving Holiday",
-        "CLOSED"
+        "CLOSED",
+        "ALL POOLS CLOSED"
     ]
 
     websiteList = ["https://calendar.tamu.edu/tamu/month/date/", "http://calendar.tamu.edu/successcenter/month/date/",
@@ -125,7 +126,7 @@ def EventCalendarScrapper(getall:bool = False, printing:bool = True):
     if (getall):
         daylist = ['20250101', '20250201', '20250301', '20250401', '20250501', '20250601', '20250701', '20250801', '20250901', '20251001', '20251101', '20251201']
     else: 
-        num_of_months = 1
+        num_of_months = 4
 
         monthList = ["01","02","03","04","05","06","07","08","09","10","11","12"]
         current_time = time.localtime()
@@ -477,7 +478,7 @@ def ERSscrapper(printing:bool = True):
 
     return all_event_metadata
 
-def main():
+def main(jsonName:str):
     try: 
         #jsonList = ["event_title","event_date","event_url","event_summary","event_description","event_category"]
         allEvents = []
@@ -508,7 +509,7 @@ def main():
 
         #store to the same folder
         base_dir = os.path.dirname(os.path.abspath(__file__))
-        json_path = os.path.join(base_dir, "events.json")
+        json_path = os.path.join(base_dir, jsonName+".json")
         with open(json_path, "w", encoding="utf-8") as f:
             json.dump(merged_list, f, indent=2, ensure_ascii=False)
 
