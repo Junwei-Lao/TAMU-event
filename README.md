@@ -2,7 +2,7 @@
 
 ## Overview
 
-[TAMUevent](tamuevent.com) is a full-stack web application that helps Texas A&M students and visitors discover upcoming campus events. It combines an automated web scraper, a database with vector-based search capabilities, and a conversational interface to make finding events more intuitive and interactive.
+[TAMUevent](https://www.tamuevent.com) is a full-stack web application that helps Texas A&M students and visitors discover upcoming campus events. It combines an automated web scraper, a database with vector-based search capabilities, and a conversational interface to make finding events more intuitive and interactive.
 
 The system is built using a Flask backend, a React frontend, and a PostgreSQL database. It continuously updates event data from official sources and supports semantic and keyword-based event searches through a chatbot-style interface.
 
